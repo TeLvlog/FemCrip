@@ -1,0 +1,173 @@
+var interactiveMap = function (t, n, e) {
+    function a() {
+        d = d3.select(t).append("svg").attr("width", _).attr("height", g).attr("class", "svg-world"), d.append("rect").attr("width", _).attr("height", g).style("opacity", 0).on("mouseenter", function () {
+            j || (j = !0, i())
+        }).on("click", function () {
+            A && (o(null), x && l(null))
+        }), p = d.append("g").attr("class", "layer-container").attr("transform", "translate(" + (_ / 2 - z.centerOffset.x) + ", 90)scale(" + y + ")"), u = p.append("g").attr("class", "layer-map"), f = p.append("g").attr("class", "layer-arcs"), h = p.append("g").attr("class", "layer-locations"), d3.json("/assets/themes/iwda_2/assets/map/data/world-topo-min.json", function (t, n) {
+            var e = topojson.feature(n, n.objects.countries).features, a = u.selectAll(".country").data(e);
+            a.enter().insert("path").attr("class", "country").attr("d", I).attr("id", function (t) {
+                return t.properties.code
+            }).style("opacity", function (t) {
+                return z.opacity.def
+            }).style("stroke-width", .5 / y).on("click", function (t) {
+                A && (o(null), x && l(null))
+            }), d3.select("#GL").remove()
+        }), s(_)
+    }
+
+    function i() {
+        d3.json("/assets/themes/iwda_2/assets/map/data/p_data.json", function (t, n, e) {
+            var a = h.selectAll(".location").data(n.locations);
+            m = n.countrycodes, a.enter().append("g").attr("class", "location").attr("transform", function (t) {
+                var n = C([t.lon, t.lat]);
+                return v.push([t.lon, t.lat, t]), "translate(" + n[0] + "," + n[1] + ")"
+            }).append("circle").attr("r", 0).style("stroke", function (t) {
+                var n = 0, e = "";
+                return t.pp.length > n && (n = t.pp.length, e = "pp"), t.idn.length > n && (n = t.idn.length, e = "idn"), t.wroab.length > n && (n = t.wroab.length, e = "wroab"), O[e]
+            }).style("fill", function (t) {
+                var n = 0, e = "";
+                return t.pp.length > n && (n = t.pp.length, e = "pp"), t.idn.length > n && (n = t.idn.length, e = "idn"), t.wroab.length > n && (n = t.wroab.length, e = "wroab"), O[e]
+            });
+            f.selectAll(".arc").data(v).enter().insert("path").attr("class", "arc").style("stroke-width", 2 / y).style("opacity", .5).attr("d", T).attr("stroke-dasharray", function (t) {
+                var n = d3.select(this).node().getTotalLength();
+                return t.strokeLength = n, n
+            }).attr("stroke-dashoffset", function (t) {
+                return t.strokeLength
+            }).style("stroke", function (t) {
+                var n = 0, e = "";
+                return t[2].pp.length > n && (n = t[2].pp.length, e = "pp"), t[2].idn.length > n && (n = t[2].idn.length, e = "idn"), t[2].wroab.length > n && (n = t[2].wroab.length, e = "wroab"), O[e]
+            }).transition().duration(4e3).attr("stroke-dashoffset", 0);
+            L.domain([0, d3.max(n.locations, function (t) {
+                return t.count
+            })]);
+            var i = setTimeout(function () {
+                clearTimeout(i), A = !0, r(k, !0, !0), $(".map-container__map-controls").fadeIn(300)
+            }, 4e3)
+        })
+    }
+
+    function r(t, n, e) {
+        M.domain([0, z.mapping[t]]), u.selectAll(".country").transition().duration(n ? 600 : 0).style("opacity", function (n) {
+            if (void 0 !== m[n.properties.code]) {
+                if ("all" === t) {
+                    var e = m[n.properties.code].pp + m[n.properties.code].idn + m[n.properties.code].wroab;
+                    return M(e)
+                }
+                return 0 === m[n.properties.code][t] ? z.opacity.def : M(m[n.properties.code][t])
+            }
+            return z.opacity.def
+        }), h.selectAll(".location").select("circle").transition().duration(e ? 300 : 0).attr("r", 0).transition().duration(n ? 600 : 0).attr("r", function (n) {
+            return "all" === t ? L(n.count) / y : n[t].length > 0 ? L(n[t].length) / y : 0
+        }).attr("stroke-width", .5 / y), h.selectAll(".location").transition().duration(n ? 500 : 0).style("opacity", function (n) {
+            return "all" === t || n[t].length > 0 ? null !== b && n.lat === b.lat && n.lon === b.lon ? 1 : .6 : 0
+        }), h.selectAll(".location").select("circle").on("mouseenter", function (n) {
+            if (!x)if ("all" === t || n[t].length > 0) {
+                d3.select(this).transition().duration(250).attr("r", function (n) {
+                    return "all" === t ? (L(n.count) + z.radius.hover) / y : n[t].length > 0 ? (L(n[t].length) + z.radius.hover) / y : 0
+                });
+                var e = {x: d3.event.clientX, y: d3.event.clientY};
+                $(".map-container__pop-up").html(n.address).css({transform: "translate(" + (e.x - $(".map-container__pop-up").width() / 2) + "px," + (e.y - ($(".map-container__pop-up").height() + 30)) + "px)"}).show()
+            } else d3.select(this).attr("r", 0)
+        }).on("mouseleave", function (n) {
+            x || ("all" === t || n[t].length > 0 ? d3.select(this).transition().duration(250).attr("r", function (n) {
+                return "all" === t ? L(n.count) / y : n[t].length > 0 ? L(n[t].length) / y : 0
+            }) : d3.select(this).attr("r", 0)), $(".map-container__pop-up").hide()
+        }).on("click", function (t) {
+            null !== b && b === t && l(t), x || o(t)
+        }), f.selectAll(".arc").transition().duration(n ? 500 : 0).style("stroke-width", 2 / y).style("opacity", function (n) {
+            return "all" === t || n[2][t].length > 0 ? .5 : 0
+        }), u.selectAll(".country").style("stroke-width", .5 / y)
+    }
+
+    function o(t) {
+        if (null !== b && t === b && (t = null, b = null), null !== t || x) {
+            if (!x) {
+                b = t, y = w;
+                var n = C([t.lon, t.lat]);
+                p.transition().duration(750).attr("transform", "translate(" + (_ / 2 - n[0] * w) + "," + (g / 2 - n[1] * w) + ")scale(" + w + ")"), $(".map-container__pop-up__zoomed").fadeIn(300)
+            }
+        } else b = null, y = 1, p.transition().duration(750).attr("transform", "translate(" + (_ / 2 - z.centerOffset.x) + ", 90)scale(" + y + ")"), $(".map-container__pop-up__zoomed").fadeOut(300);
+        r(k, !0, !1)
+    }
+
+    function l(t) {
+        if ($target = $(".map-container__information"), null === t) $target.fadeOut(500).find(".map-container__information__selection .inner-content").html(""), c($target, {
+            name: "",
+            description: "",
+            website: "",
+            number_in_network: ""
+        }), x = !1; else {
+            x = !0, $target.fadeIn(500).find(".map-container__information__title .inner-content").html(t.address + '<div class="close">close</div>'), $target.find(".close").on("click", function () {
+                l(null)
+            });
+            for (var n = 0; n < t.idn.length; n++)$target.find(".map-container__information__selection .inner-content").append('<div class="option" data-index="' + n + '" data-type="idn"><div class="ellipse light-green"></div>' + t.idn[n].name + "</div>");
+            for (var e = 0; e < t.pp.length; e++)$target.find(".map-container__information__selection .inner-content").append('<div class="option" data-index="' + e + '" data-type="pp"><div class="ellipse dark-purple"></div>' + t.pp[e].name + "</div>");
+            for (var a = 0; a < t.wroab.length; a++)$target.find(".map-container__information__selection .inner-content").append('<div class="option" data-index="' + a + '" data-type="wroab"><div class="ellipse rubine-red"></div>' + t.wroab[a].name + "</div>");
+            $target.find(".map-container__information__selection .inner-content .option").unbind().on("click", function () {
+                $target.find(".map-container__information__selection .inner-content .option").removeClass("selected"), $(this).addClass("selected");
+                var n = $(this).data("index"), e = $(this).data("type");
+                c($target, t[e][n])
+            })
+        }
+    }
+
+    function c(t, n) {
+        t.find(".map-container__information__content").fadeOut(150).promise().done(function () {
+            t.find(".map-container__information__content .title").html(n.name), t.find(".map-container__information__content .reach").html(function () {
+                return "" !== n.number_in_network ? "Reach: " + n.number_in_network : "Select a partner on the left to get more information."
+            }), t.find(".map-container__information__content .url").html('<a href="' + n.website + '" target="_blank">' + n.website + "</a>"), t.find(".map-container__information__content .description").html(n.description), $(this).fadeIn(300)
+        })
+    }
+
+    function s(t) {
+        _ = t, d.attr("width", _), d.select("rect").attr("width", _), A && o(null)
+    }
+
+    var d, p, u, f, h, m, _ = n, g = e, v = (d3.geo.graticule(), []), w = 5, y = 1, b = null, k = "all", x = !1, A = !1,
+        j = !1, O = {
+            all: "rgba(174, 60, 198, 1)",
+            pp: "rgba(109, 27, 115, 1)",
+            idn: "rgba(177, 210, 51, 1)",
+            wroab: "rgba(237, 10, 118, 1)"
+        }, z = {
+            radius: {min: 5, max: 25, hover: 5},
+            opacity: {def: .2, min: .5, max: 1},
+            mapping: {pp: 8, idn: 11, wroab: 16, all: 16},
+            centerOffset: {x: 475, y: null},
+            arcsCenter: {lat: -37.813628, lon: 144.963058}
+        }, C = d3.geo.mercator().rotate([-150, 0]).scale(120).precision(.1), I = d3.geo.path().projection(C),
+        T = d3.svg.diagonal().source(function () {
+            var t = C([z.arcsCenter.lon, z.arcsCenter.lat]);
+            return {x: t[0], y: t[1]}
+        }).target(function (t) {
+            var n = C([t[0], t[1]]);
+            return {x: n[0], y: n[1]}
+        }).projection(function (t) {
+            return [t.x, t.y]
+        }), L = d3.scale.linear().range([z.radius.min, z.radius.max]),
+        M = d3.scale.linear().range([z.opacity.min, z.opacity.max]);
+    return {
+        init: function () {
+            a()
+        }, update: function (t) {
+            k = t, A && r(k, !0, !0)
+        }, resize: function (t) {
+            s(t)
+        }
+    }
+};
+$(document).ready(function () {
+    function t(t) {
+        t < 650 && !e && (e = !e, $(".width-notification").fadeIn(300))
+    }
+
+    var n = $(window).width(), e = !1, a = interactiveMap(".map-container__map", n, 500);
+    a.init(), t(n), $(window).on("resize", function () {
+        var e = setTimeout(function () {
+            n !== $(window).width() && (n = $(window).width(), t(n), a.resize(n), clearTimeout(e))
+        }, 500)
+    }), $(".dismiss").on("click", function () {
+        $(".width-notification").fadeOut(300)
+    })
+});

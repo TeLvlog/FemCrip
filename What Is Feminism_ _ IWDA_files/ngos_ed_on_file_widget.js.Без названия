@@ -1,0 +1,14 @@
+(function () {
+    var widget_img = document.createElement("img");
+    widget_img.src = 'http://www.ngosource.org/sites/default/files/ngos_ed_on_file_widget.png';
+    widget_img.alt = 'NGOsource Equivalency Determination on File';
+
+    var widget_link = document.createElement("a");
+    var theUrl = 'http://www.ngosource.org/about-equivalency-determination-on-file-badge';
+    widget_link.href = theUrl + ( theUrl.indexOf("?") >= 0 ? "&" : "?") + 'ref=' + encodeURIComponent(window.location.href);
+    widget_link.title = 'About Equivalency Determination on File badge';
+    widget_link.appendChild(widget_img);
+
+    var widget_script = document.getElementById('ngos-ed-on-file-widget-script-17336c1f-917d-492b-bc53-225c95e103da');
+    widget_script.parentNode.insertBefore(widget_link, widget_script);
+})();

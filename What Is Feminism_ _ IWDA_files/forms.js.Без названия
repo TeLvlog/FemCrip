@@ -1,0 +1,53 @@
+/**
+ * Forms helper classes
+ */
+window.addEventListener('DOMContentLoaded', function () {
+    function checkSelected(select) {
+        const selected = select.options[select.selectedIndex];
+        if (selected.value === '') {
+            select.classList.add('app-form__input--placeholder');
+        } else {
+            select.classList.remove('app-form__input--placeholder');
+        }
+    }
+
+    function initSelect(select) {
+        select.addEventListener('input', checkSelected.bind(undefined, select));
+        checkSelected(select);
+    }
+
+    function init(form) {
+        const selects = form.querySelectorAll('select');
+        selects.forEach(initSelect);
+    }
+
+    const forms = document.querySelectorAll('.app-form');
+    forms.forEach(init);
+});
+
+/**
+ * Gravity forms total input
+ */
+window.addEventListener('DOMContentLoaded', function () {
+    function updateTotal(label, total) {
+        const newLabel = `${label.dataset.label} ${total.value}`;
+        if (newLabel !== label.innerText) {
+            label.innerText = `${label.dataset.label} ${total.value}`;
+        }
+    }
+
+    function init(container) {
+        const label = container.querySelector('.gfield_label');
+        const total = container.querySelector('.ginput_total');
+
+        label.dataset.label = label.innerText;
+        total.setAttribute('type', 'hidden');
+        updateTotal(label, total);
+
+        // todo: is there a better solution for this?
+        window.setInterval(updateTotal.bind(undefined, label, total), 100);
+    }
+
+    const containers = document.querySelectorAll('.app-form__total--grand');
+    containers.forEach(init);
+});

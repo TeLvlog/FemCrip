@@ -1,0 +1,55 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: "iwda-custom-icons";
+  src:url("fonts/iwda-custom-icons.eot");
+  src:url("fonts/iwda-custom-icons.eot?#iefix") format("embedded-opentype"),
+    url("fonts/iwda-custom-icons.woff") format("woff"),
+    url("fonts/iwda-custom-icons.ttf") format("truetype"),
+    url("fonts/iwda-custom-icons.svg#iwda-custom-icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+[data-icon]:before {
+  font-family: "iwda-custom-icons" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="iwda-"]:before,
+[class*=" iwda-"]:before {
+  font-family: "iwda-custom-icons" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.iwda-cogs:before {
+  content: "\62";
+}
+.iwda-icon-globe:before {
+  content: "\63";
+}
+.iwda-icon-hands:before {
+  content: "\64";
+}
+.iwda-icon-people:before {
+  content: "\66";
+}
+.iwda-iwda-eco-icon:before {
+  content: "\67";
+}
